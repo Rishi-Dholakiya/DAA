@@ -1,0 +1,102 @@
+package Project;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+
+public class BinarySearchVisualizer extends JFrame {
+
+    private JTextField inputField;
+    private JTextField targetField;
+    private JTextArea outputArea;
+    private JButton searchButton;
+
+    public BinarySearchVisualizer() {
+        setTitle("Binary Search Visualizer");
+        setSize(900, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        // Input Panel
+        JPanel inputPanel = new JPanel();
+        inputField = new JTextField(20);
+        targetField = new JTextField(10);
+        searchButton = new JButton("Search");
+
+        inputPanel.add(new JLabel("Enter sorted numbers (space-separated):"));
+        inputPanel.add(inputField);
+        inputPanel.add(new JLabel("Target:"));
+        inputPanel.add(targetField);
+        inputPanel.add(searchButton);
+
+        add(inputPanel, BorderLayout.NORTH);
+
+        // Output Area
+        outputArea = new JTextArea();
+        outputArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(outputArea);
+        add(scrollPane, BorderLayout.CENTER);
+
+        // Action Listener for Search Button
+        searchButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String input = inputField.getText();
+                String targetText = targetField.getText();
+                try {
+                    int target = Integer.parseInt(targetText);
+                    String[] parts = input.trim().split("\\s+");
+                    int[] arr = Arrays.stream(parts).mapToInt(Integer::parseInt).toArray();
+
+                    // Check if the array is sorted
+                    if (!isSorted(arr)) {
+                        outputArea.setText("The array is not sorted. Please enter a sorted array.");
+                    } else {
+                        binarySearch(arr, target);
+                    }
+                } catch (NumberFormatException ex) {
+                    outputArea.setText("Invalid input. Please enter valid integers.");
+                }
+            }
+        });
+    }
+
+    public boolean isSorted(int[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] < arr[i - 1]) {
+                return false; // Array is not sorted
+            }
+        }
+        return true; // Array is sorted
+    }
+
+    public void binarySearch(int[] arr, int target) {
+        int low = 0;
+        int high = arr.length - 1;
+        outputArea.setText("Sorted Array: " + Arrays.toString(arr) + "\n");
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            outputArea.append("Checking index " + mid + ": " + arr[mid] + "\n");
+
+            if (arr[mid] == target) {
+                outputArea.append("Target " + target + " found at index " + mid + ".\n");
+                return;
+            } else if (arr[mid] < target) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        outputArea.append("Target not found.\n");
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            BinarySearchVisualizer visualizer = new BinarySearchVisualizer();
+            visualizer.setVisible(true);
+        });
+    }
+}
