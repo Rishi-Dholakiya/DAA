@@ -1,0 +1,43 @@
+class Solution {
+    public void nextPermutation(int[] nums) {
+        // Step 1: Find the break point:
+        int index = -1;
+        for (int i = nums.length - 2; i >= 0; i--) {
+            if (nums[i] < nums[i + 1]) {
+                index = i;
+                break;
+            }
+        }
+
+        // If break point does not exist:
+        if (index == -1) {
+            // Reverse the whole array:
+            reverse(nums, 0, nums.length - 1);
+            return;  // No further steps needed
+        }
+
+        // Step 2: Find the next greater element to swap with nums[index]:
+        for (int i = nums.length - 1; i > index; i--) {
+            if (nums[i] > nums[index]) {
+                // Swap nums[i] and nums[index]
+                int temp = nums[i];
+                nums[i] = nums[index];
+                nums[index] = temp;
+                break;
+            }
+        }
+
+        // Step 3: Reverse the right half:
+        reverse(nums, index + 1, nums.length - 1);
+    }
+
+     public void reverse(int[] arr, int start, int end) {
+        while (start < end) {
+            int temp = arr[start];
+            arr[start] = arr[end];
+            arr[end] = temp;
+            start++;
+            end--;
+        }
+    }
+}
